@@ -12,8 +12,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      api: path.resolve(__dirname, 'src/modules/api/'),
-      modules: path.resolve(__dirname, 'src/modules/'),
+      components: path.resolve(__dirname, 'src/components/'),
+      containers: path.resolve(__dirname, 'src/containers/'),
       assets: path.resolve(__dirname, 'assets/'),
       src: path.resolve(__dirname, 'src/'),
     },
@@ -22,6 +22,23 @@ module.exports = {
   devtool: 'source-map',
   module: {
     rules: [
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
       {
         enforce: 'pre',
         test: /\.js$/,

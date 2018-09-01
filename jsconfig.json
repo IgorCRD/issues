@@ -7,7 +7,8 @@
     "baseUrl": "./",
     "paths": {
       "src/*": ["src/*"],
-      "modules/*": ["src/modules/*"]
+      "components/*": ["src/components/*"],
+      "containers/*": ["src/containers/*"]
     }
   },
   "exclude": ["dist", "node_modules"]
