@@ -15,17 +15,38 @@ const MainPage = ({ children }) => (
         style={{ lineHeight: '64px' }}
       >
         <Menu.Item style={{ padding: '0' }}>
-          <Avatar size={45} style={{ backgroundColor: 'Yellow', padding: '5px' }} src={logo} />
+          <Avatar
+            size={45}
+            style={{ backgroundColor: 'rgb(97, 67, 190)', padding: '5px' }}
+            src={logo}
+          />
         </Menu.Item>
         <Menu.Item style={{ fontSize: '20px' }}>
           We have
           {' '}
-          <mark style={{ padding: '0', backgroundColor: 'yellow' }}>Issues</mark>
+          <mark style={{ padding: '0', backgroundColor: 'rgb(97, 67, 190)', color: 'white' }}>
+            Issues
+          </mark>
         </Menu.Item>
       </Menu>
     </Header>
     <Content style={{ padding: '0 50px', marginTop: 64 }}>{children}</Content>
-    <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+    <Footer>
+      <span style={{ float: 'left', textAlign: 'center', width: '100%' }}>
+        Nilus - Todos os direitos Reservados
+      </span>
+      <span
+        style={{
+          float: 'right',
+          width: '34%',
+          textAlign: 'right',
+          position: 'absolute',
+          transform: 'translateX(-100%)',
+        }}
+      >
+        Powered by - Stalo | Software Studio
+      </span>
+    </Footer>
   </Layout>
 );
 

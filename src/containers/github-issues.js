@@ -5,38 +5,114 @@ class GitHubIssues extends React.Component {
   static propTypes = {
     repository: PropTypes.string.isRequired,
     children: PropTypes.func.isRequired,
+    perPage: PropTypes.number,
   };
 
-  static issuesUrl = repo => `https://api.github.com/repos/${repo}/issues?per_page=20`;
+  static defaultProps = {
+    perPage: 10,
+  };
+
+  static issuesUrl = (repo, perPage, page, searchTitle, filters) => {
+    /* eslint-disable */
+    debugger;
+    const state = filters && filters.state;
+    return `https://api.github.com/search/issues?q=${
+      searchTitle ? `${searchTitle}+` : ''
+    }repo:${repo}+type:issue${searchTitle ? '+in:title' : ''}${
+      state && state.length === 1 ? `+state:${state[0]}` : ''
+    }&per_page=${perPage}&page=${page}`;
+  };
 
   state = {
     issues: null,
+    total: null,
+    currentPage: 1,
     error: null,
+    searchTitle: null,
+    filters: null,
   };
 
   issuesFetchController = new AbortController();
 
   componentDidMount() {
-    const { repository } = this.props;
+    this.fetchData();
+  }
 
-    fetch(GitHubIssues.issuesUrl(repository), { signal: this.issuesFetchController.signal })
-      .then(resp => resp.json())
-      .then((issues) => {
-        this.setState({ issues });
-      })
-      .catch((error) => {
-        this.setState({ error });
-      });
+  componentDidUpdate(prevProps, prevState) {
+    const { currentPage, searchTitle, filters } = this.state;
+    const {
+      currentPage: prevCurrentPage,
+      searchTitle: prevsearchTitle,
+      filters: prevFilters,
+    } = prevState;
+    if (
+      currentPage !== prevCurrentPage ||
+      searchTitle !== prevsearchTitle ||
+      filters !== prevFilters
+    ) {
+      this.fetchData();
+    }
   }
 
   componentWillUnmount() {
     this.issuesFetchController.abort();
   }
 
+  fetchData = () => {
+    const { repository, perPage } = this.props;
+    const { currentPage, error, searchTitle, filters } = this.state;
+
+    if (error) return;
+
+    fetch(GitHubIssues.issuesUrl(repository, perPage, currentPage, searchTitle, filters), {
+      signal: this.issuesFetchController.signal,
+    })
+      .then(resp => resp.json())
+      .then(resp => {
+        this.setState({
+          issues: resp.items,
+          total: resp.total_count,
+          currentPage,
+        });
+      })
+      .catch(err => {
+        this.setState({ error: err });
+      });
+  };
+
+  onPageChange = page => {
+    this.setState({
+      currentPage: page,
+    });
+  };
+
+  onTitleSearch = searchValue => {
+    this.setState({
+      searchTitle: searchValue,
+    });
+  };
+
+  onFilterChange = filters => {
+    this.setState({
+      filters,
+    });
+  };
+
   render() {
-    const { issues, error } = this.state;
+    const { issues, total, currentPage, error } = this.state;
     const { children } = this.props;
-    return children && children({ issues, error });
+    return (
+      children &&
+      children({
+        issues,
+        total,
+        currentPage,
+        onPageChange: this.onPageChange,
+        onTitleSearch: this.onTitleSearch,
+        onFilterChange: this.onFilterChange,
+        error,
+      })
+    );
   }
 }
 

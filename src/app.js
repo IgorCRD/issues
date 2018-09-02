@@ -5,8 +5,19 @@ import GitHubIssues from 'containers/github-issues';
 
 const App = () => (
   <MainPage>
-    <GitHubIssues repository="facebook/react">
-      {({ issues }) => issues && <IssuesList issues={issues} />}
+    <GitHubIssues repository="facebook/react" perPage={10}>
+      {({
+        issues, total, currentPage, onPageChange, onTitleSearch, onFilterChange,
+      }) => (
+        <IssuesList
+          issues={issues}
+          total={total}
+          currentPage={currentPage}
+          onPageChange={onPageChange}
+          onTitleSearch={onTitleSearch}
+          onFilterChange={onFilterChange}
+        />
+      )}
     </GitHubIssues>
   </MainPage>
 );
