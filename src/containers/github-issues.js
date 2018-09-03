@@ -13,8 +13,6 @@ class GitHubIssues extends React.Component {
   };
 
   static issuesUrl = (repo, perPage, page, searchTitle, filters) => {
-    /* eslint-disable */
-    debugger;
     const state = filters && filters.state;
     return `https://api.github.com/search/issues?q=${
       searchTitle ? `${searchTitle}+` : ''
@@ -46,9 +44,9 @@ class GitHubIssues extends React.Component {
       filters: prevFilters,
     } = prevState;
     if (
-      currentPage !== prevCurrentPage ||
-      searchTitle !== prevsearchTitle ||
-      filters !== prevFilters
+      currentPage !== prevCurrentPage
+      || searchTitle !== prevsearchTitle
+      || filters !== prevFilters
     ) {
       this.fetchData();
     }
@@ -60,7 +58,9 @@ class GitHubIssues extends React.Component {
 
   fetchData = () => {
     const { repository, perPage } = this.props;
-    const { currentPage, error, searchTitle, filters } = this.state;
+    const {
+      currentPage, error, searchTitle, filters,
+    } = this.state;
 
     if (error) return;
 
@@ -68,42 +68,44 @@ class GitHubIssues extends React.Component {
       signal: this.issuesFetchController.signal,
     })
       .then(resp => resp.json())
-      .then(resp => {
+      .then((resp) => {
         this.setState({
           issues: resp.items,
           total: resp.total_count,
           currentPage,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ error: err });
       });
   };
 
-  onPageChange = page => {
+  onPageChange = (page) => {
     this.setState({
       currentPage: page,
     });
   };
 
-  onTitleSearch = searchValue => {
+  onTitleSearch = (searchValue) => {
     this.setState({
       searchTitle: searchValue,
     });
   };
 
-  onFilterChange = filters => {
+  onFilterChange = (filters) => {
     this.setState({
       filters,
     });
   };
 
   render() {
-    const { issues, total, currentPage, error } = this.state;
+    const {
+      issues, total, currentPage, error,
+    } = this.state;
     const { children } = this.props;
     return (
-      children &&
-      children({
+      children
+      && children({
         issues,
         total,
         currentPage,

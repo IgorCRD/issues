@@ -1,0 +1,34 @@
+@import "../theme.less";
+
+.main-page {
+  .header {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+  }
+  .avatar {
+    background-color: @special-background-color;
+    padding: 5px;
+  }
+  .footer-text1 {
+    float: left;
+    text-align: center;
+    width: 100%;
+  }
+  .footer-text2 {
+    float: right;
+    width: 34%;
+    text-align: right;
+    position: absolute;
+    transform: translateX(-100%);
+  }
+  .content {
+    padding: 0 50px;
+    margin-top: 64px;
+  }
+  .mark {
+    padding: 0;
+    background-color: @special-background-color;
+    color: @special-font-color;
+  }
+}

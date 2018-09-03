@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Layout, Divider, Table, Input,
+  Layout, Divider, Table, Input, Button, Modal,
 } from 'antd';
+import NewIssue from 'components/new-issue';
+
+import 'components/issues-list.less';
 
 const { Search } = Input;
 const { Content } = Layout;
@@ -59,6 +62,10 @@ class IssuesList extends React.Component {
     currentPage: null,
   };
 
+  state = {
+    visible: false,
+  };
+
   onChangeHandler = (pagination, filters) => {
     const { current: newPage } = pagination;
     const { currentPage: prevPage, onPageChange, onFilterChange } = this.props;
@@ -71,25 +78,47 @@ class IssuesList extends React.Component {
     onFilterChange(filters);
   };
 
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
   render() {
     const {
       issues, currentPage, total, onTitleSearch,
     } = this.props;
+    const { visible } = this.state;
 
     return (
-      <Layout style={{ background: '#fff', padding: '3%' }}>
-        <h1 style={{ marginBottom: '0', fontWeight: 200, color: 'rgb(112, 112, 112)' }}>Issues</h1>
+      <Layout className="issuesList">
+        <h1 className="title">Issues</h1>
         <Divider />
-        <Search
-          placeholder="Search issues by title"
-          onSearch={onTitleSearch}
-          style={{
-            width: '50%',
-            height: '3em',
-            marginTop: '1em',
-            marginBottom: '3em',
-          }}
-        />
+        <div className="flex">
+          <Search
+            placeholder="Search issues by title"
+            onSearch={onTitleSearch}
+            className="search"
+          />
+          <Button className="button" type="primary" onClick={this.showModal}>
+            New Issue
+          </Button>
+        </div>
+        <Modal
+          title="New issue"
+          visible={visible}
+          onOk={this.closeModal}
+          onCancel={this.closeModal}
+          destroyOnClose
+        >
+          <NewIssue />
+        </Modal>
         <Content>
           <Table
             dataSource={issues}
@@ -100,6 +129,7 @@ class IssuesList extends React.Component {
               current: currentPage,
               total,
             }}
+            rowKey={data => data.id}
           />
         </Content>
       </Layout>

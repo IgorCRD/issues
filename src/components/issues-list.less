@@ -1,0 +1,65 @@
+@import "../theme.less";
+
+.issuesList {
+  background: #fff;
+  padding: 3%;
+  .ant-table-thead > tr > th {
+    background: @secondary-background-color;
+    color: @primary-font-color;
+  }
+  .ant-table-tbody > tr > td {
+    color: @primary-font-color;
+    font-weight: 600;
+  }
+  .ant-pagination {
+    float: left;
+    li {
+      border: 0;
+      background: @secondary-background-color;
+      .ant-pagination-item-link {
+        border: 0;
+        background: @secondary-background-color;
+      }
+    }
+    .ant-pagination-item-active {
+      background: @special-background-color;
+      a {
+        color: @special-font-color;
+      }
+    }
+  }
+  .title {
+    margin-bottom: 0px;
+    font-weight: 200;
+    color: @primary-font-color;
+  }
+  .search {
+    float: left;
+    width: 50%;
+    height: 3em;
+  }
+  .button {
+    float: right;
+    background: @special-background-color;
+    color: @special-font-color;
+    border: 0;
+    height: 3em;
+    align-self: flex-end;
+  }
+  .flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 1em;
+    margin-bottom: 3em;
+  }
+}
+.ant-modal {
+  .ant-btn {
+    border: 0;
+    background: @secondary-background-color;
+  }
+  .ant-btn-primary {
+    background: @special-background-color;
+  }
+}

@@ -17,7 +17,7 @@ module.exports = {
       assets: path.resolve(__dirname, 'assets/'),
       src: path.resolve(__dirname, 'src/'),
     },
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.less'],
   },
   devtool: 'source-map',
   module: {
