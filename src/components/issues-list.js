@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Layout, Divider, Table, Input, Button, Modal,
+  Layout, Divider, Table, Input, Button, Modal, notification,
 } from 'antd';
 import NewIssue from 'components/new-issue';
 
@@ -54,12 +54,15 @@ class IssuesList extends React.Component {
     onPageChange: PropTypes.func.isRequired,
     onTitleSearch: PropTypes.func.isRequired,
     onFilterChange: PropTypes.func.isRequired,
+    retry: PropTypes.func.isRequired,
+    error: PropTypes.shape({}),
   };
 
   static defaultProps = {
     issues: null,
     total: null,
     currentPage: null,
+    error: null,
   };
 
   state = {
@@ -70,9 +73,9 @@ class IssuesList extends React.Component {
     const { current: newPage } = pagination;
     const { currentPage: prevPage, onPageChange, onFilterChange } = this.props;
 
+    notification.close('errorNotification');
     if (newPage !== prevPage) {
       onPageChange(newPage);
-      return;
     }
 
     onFilterChange(filters);
@@ -90,11 +93,35 @@ class IssuesList extends React.Component {
     });
   };
 
+  openErrorNotification = (message, onRetry) => {
+    const btn = (
+      <Button
+        type="primary"
+        size="small"
+        onClick={() => {
+          onRetry();
+          notification.close('errorNotification');
+        }}
+      >
+        Retry
+      </Button>
+    );
+    notification.open({
+      message: 'Error',
+      description: message,
+      duration: 0,
+      btn,
+      key: 'errorNotification',
+    });
+  };
+
   render() {
     const {
-      issues, currentPage, total, onTitleSearch,
+      issues, currentPage, total, onTitleSearch, retry, error,
     } = this.props;
     const { visible } = this.state;
+
+    if (error) this.openErrorNotification(error.message, retry);
 
     return (
       <Layout className="issuesList">
@@ -122,7 +149,7 @@ class IssuesList extends React.Component {
         <Content>
           <Table
             dataSource={issues}
-            loading={!issues}
+            loading={!issues && !error}
             columns={columns}
             onChange={this.onChangeHandler}
             pagination={{

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import isEqual from 'lodash/isEqual';
 
 class GitHubIssues extends React.Component {
   static propTypes = {
@@ -33,7 +34,7 @@ class GitHubIssues extends React.Component {
   issuesFetchController = new AbortController();
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchIssues();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -43,12 +44,13 @@ class GitHubIssues extends React.Component {
       searchTitle: prevsearchTitle,
       filters: prevFilters,
     } = prevState;
+
     if (
       currentPage !== prevCurrentPage
       || searchTitle !== prevsearchTitle
-      || filters !== prevFilters
+      || !isEqual(filters, prevFilters) // deep comparison
     ) {
-      this.fetchData();
+      this.fetchIssues();
     }
   }
 
@@ -56,18 +58,22 @@ class GitHubIssues extends React.Component {
     this.issuesFetchController.abort();
   }
 
-  fetchData = () => {
+  fetchIssues = () => {
     const { repository, perPage } = this.props;
-    const {
-      currentPage, error, searchTitle, filters,
-    } = this.state;
+    const { currentPage, searchTitle, filters } = this.state;
 
-    if (error) return;
+    this.setState({
+      issues: null,
+      error: null,
+    });
 
     fetch(GitHubIssues.issuesUrl(repository, perPage, currentPage, searchTitle, filters), {
       signal: this.issuesFetchController.signal,
     })
-      .then(resp => resp.json())
+      .then((resp) => {
+        if (resp.status < 200 || resp.status > 299) throw resp;
+        return resp.json();
+      })
       .then((resp) => {
         this.setState({
           issues: resp.items,
@@ -76,26 +82,35 @@ class GitHubIssues extends React.Component {
         });
       })
       .catch((err) => {
-        this.setState({ error: err });
+        err.json().then((error) => {
+          this.setState({ error });
+        });
       });
   };
 
   onPageChange = (page) => {
     this.setState({
+      error: null,
       currentPage: page,
     });
   };
 
   onTitleSearch = (searchValue) => {
     this.setState({
+      error: null,
       searchTitle: searchValue,
     });
   };
 
   onFilterChange = (filters) => {
     this.setState({
+      error: null,
       filters,
     });
+  };
+
+  retry = () => {
+    this.fetchIssues();
   };
 
   render() {
@@ -112,6 +127,7 @@ class GitHubIssues extends React.Component {
         onPageChange: this.onPageChange,
         onTitleSearch: this.onTitleSearch,
         onFilterChange: this.onFilterChange,
+        retry: this.retry,
         error,
       })
     );

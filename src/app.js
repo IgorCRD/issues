@@ -7,7 +7,14 @@ const App = () => (
   <MainPage>
     <GitHubIssues repository="facebook/react" perPage={10}>
       {({
-        issues, total, currentPage, onPageChange, onTitleSearch, onFilterChange,
+        issues,
+        total,
+        currentPage,
+        onPageChange,
+        onTitleSearch,
+        onFilterChange,
+        retry,
+        error,
       }) => (
         <IssuesList
           issues={issues}
@@ -16,6 +23,8 @@ const App = () => (
           onPageChange={onPageChange}
           onTitleSearch={onTitleSearch}
           onFilterChange={onFilterChange}
+          retry={retry}
+          error={error}
         />
       )}
     </GitHubIssues>
